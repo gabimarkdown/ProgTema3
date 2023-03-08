@@ -358,3 +358,32 @@ data(Salaries, package="carData")
         ggplotly(q)
         
 ```
+
+GRAFICO COVID
+```{r}
+#Libreria que contiene la funcion read_csv
+library(readr)
+#Leemos los datos
+datos=read_csv("https://covid.ourworldindata.org/data/owid-covid-data.csv")
+
+#Cargamos las librerias necesarias para implementar las funciones utiles de la libreria ggplot
+library(ggplot2)
+library(dplyr)
+#Filtramos por los paises que nos interesan
+paises<-c("United States","Italy", "France","Germany","Canada","Japan","United Kingdom","United States","Spain")
+datos_1<-datos %>% filter(location %in% paises)
+
+#Una vez ya hemos filtrado los datos por los que nos interesan,generamos el g
+#He aplicado el valor de 0.8 para el grosor de la linea que representa a España para que sea mas grande que las otras pero no las tape a su vez
+ggplot(datos_1,aes(x=date,y=new_deaths_smoothed_per_million,colour=location))+geom_line()+geom_line(data=filter(datos_1,location=="Spain"),col="black",size=0.8)+scale_y_continuous(breaks=seq(0,20,by=2))+scale_x_date(date_labels="%b %d %y",breaks=seq(min(datos_1$date),max(datos_1$date),length.out=9 )) +labs(title="Daily new confirmed COVID-19 deaths per million people",subtitle="7-day rolling average.For some countries the number of confirmed deaths is much lower than the true number of deaths.This is because of limited \n testing and challenges in the attribution of the cause death",y="",x="",caption="Source:Johns Hopkins University CSSE COVID-19 Data",tag="CC BY")+theme_classic()+theme(
+                            panel.grid.major.y=element_line(color="gray",linetype=2,size=0.1),
+                            plot.title=element_text(color="black",size=14,face="italic"),
+                            plot.subtitle=element_text(color="gray",size=7,face="plain"),
+                            plot.caption = element_text(hjust = 0,size=6),
+                            legend.position="none",
+                            plot.tag.position="bottomright",
+                            plot.tag=element_text(size=10,color="gray")
+                            )
+
+```
+
